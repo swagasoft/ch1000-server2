@@ -1,4 +1,4 @@
 /node_modules
 package-lock.json
 #excluse db.js file
-config.json
+#config.json
