@@ -1,0 +1,28 @@
+{
+  "name": "channel1000",
+  "version": "1.0.0",
+  "description": "online investment",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "simon jerry",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.3.1",
+    "cors": "^2.8.5",
+    "cryptr": "^4.0.2",
+    "express": "^4.17.1",
+    "express-handlebars": "^3.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.6.2",
+    "mongoose-unique-validator": "^2.0.3",
+    "nodemailer": "^6.3.0",
+    "nodemon": "^1.19.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
+  }
+}
