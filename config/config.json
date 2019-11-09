@@ -7,7 +7,7 @@
     },
     "production": {
       
-        "MONGODB_URI":"mongodb+srv://swagasoft:simoopam222@cluster0-fpth1.mongodb.net/ch1000?retryWrites=true&w=majority",
+        "MONGODB_URI":"mongodb+srv://swagasoft:<password>@cluster0-bv5fx.mongodb.net/test?retryWrites=true&w=majority",
         "JWT_SECRET": "SECRET#123",
          "FRONT_END_LINK": "http://localhost:4200/#/"
 
