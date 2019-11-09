@@ -72,7 +72,7 @@ user.activate = false;
                       User.findOne({$and: [ {sort :{'date' :1}} , {point : {$lt: 4} },
                           {activate: true}
                         ]}
-                      ).then((user)=> {
+                      ).then((user)=> { 
                          console.log(user);
                         if(user){
                           user.downline.push(usernameToLower);
