@@ -6,7 +6,7 @@ const Transaction = mongoose.model('Transaction');
 const Invest = mongoose.model('Payment');
 const PayoutModel = mongoose.model('Payout');
 
-var levelOnePay = 375;
+var levelOnePay = 425;
 var levelTwopay = 1400;
 var levelThreePay = 3840;
 var levelFourPay = 21504;
