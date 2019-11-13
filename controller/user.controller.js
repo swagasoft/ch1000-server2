@@ -6,7 +6,8 @@ const lodash = require('lodash');
 const User = mongoose.model('User');
 const Invest = mongoose.model('Payment');
 const nodemailer = require("nodemailer");
-const Base_link = 'https://ch1000.netlify.com/#/link/';
+const Base_link = 'http://localhost:4200/#/link/';
+// const Base_link = 'https://ch1000.netlify.com/#/link/';
 const MARKETER = 'MARKETER';
 
 
@@ -29,7 +30,7 @@ away from becoming our millioniare.</p> <br>
 
   const register = async (req, res, next) => {
     
-     await User.findOne({}, {},{sort : {'date': -1}}).then((lastUser, err)=> {
+    //  await User.findOne({}, {},{sort : {'date': -1}}).then((lastUser, err)=> {
       
    
   var user = new User();
@@ -48,7 +49,7 @@ user.fullname = req.body.fullname;
 user.username = usernameToLower;
 user.email = email_lower;
 user.ref_link = Base_link+req.body.username;
-user.cust_id = lastUser.cust_id += 1;
+user.cust_id =  0000;
 user.role =  req.body.role;
 user.ref = ref_username;
 user.downline.push();
@@ -61,7 +62,7 @@ user.earnings = 0;
 user.activate = false;
  user.save(( err, doc) => {
       if(!err){
-         if(ref_username != null){
+         if(ref_username != null || undefined){
           console.log('REFERRAL IS.', ref_username);
             User.findOne({username:ref_username}).then( result => {
             result.downline.push(usernameToLower);
@@ -69,19 +70,19 @@ user.activate = false;
             result.save(); });
                   }else{
                       console.log('REFERRAL IS NOT DEFINE.');
-                      User.findOne({$and: [ {sort :{'date' :1}} , {point : {$lt: 4} },
-                          {activate: true}
-                        ]}
-                      ).then((user)=> {  
-                         console.log(user);
-                        if(user){
-                          user.downline.push(usernameToLower);
-                        user.ref_count++;
-                        user.save();
-                        }else{
-                          console.warn('NO USER TO PUSH  DOWN LINE');
-                        }
-                      })
+                      // User.findOne({$and: [ {sort :{'date' :1}} , {point : {$lt: 4} },
+                      //     {activate: true}
+                      //   ]}
+                      // ).then((user)=> {  
+                      //    console.log(user);
+                      //   if(user){
+                      //     user.downline.push(usernameToLower);
+                      //   user.ref_count++;
+                      //   user.save();
+                      //   }else{
+                      //     console.warn('NO USER TO PUSH  DOWN LINE');
+                      //   }
+                      // })
                   }
       res.status(201).send(['Registration succesful']);
       
@@ -101,7 +102,6 @@ user.activate = false;
     
 }); // end save.
 
-}); // end find user
 
 }
 
