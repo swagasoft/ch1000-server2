@@ -1,7 +1,7 @@
 {
     "development": {
        
-        "MONGODB_URI":"mongodb://localhost:27017/channel1000",           
+        "MONGODB_URI":"mongodb+srv://swagasoft:simoopam222@cluster0-bv5fx.mongodb.net/test?retryWrites=true&w=majority",           
         "JWT_SECRET": "SECRET#123",
         "FRONT_END_LINK": "http://localhost:4200/#/"
     },
