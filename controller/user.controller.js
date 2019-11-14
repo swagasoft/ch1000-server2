@@ -8,7 +8,6 @@ const Invest = mongoose.model('Payment');
 const nodemailer = require("nodemailer");
 // const Base_link = 'http://localhost:4200/#/link/';
 const Base_link = 'https://ch1000.netlify.com/#/link/';
-const MARKETER = 'MARKETER';
 
 
 
@@ -35,6 +34,7 @@ away from becoming our millioniare.</p> <br>
    
   var user = new User();
     let ref_username = req.body.ref_username;
+  console.warn('HERE...',ref_username);
 
 // convert all m to lower case.
 let getEmail = req.body.email;
