@@ -64,7 +64,7 @@ user.activate = false;
       if(!err){
          if(ref_username != null || undefined){
           console.log('REFERRAL IS.', ref_username);
-            User.findOne({username:ref_username}).then( result => {
+            User.findOne({username:ref_username}).then(( result) => {
             result.downline.push(usernameToLower);
             result.ref_count++;
             result.save(); });
