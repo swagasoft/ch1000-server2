@@ -7,7 +7,7 @@ const User = mongoose.model('User');
 const Invest = mongoose.model('Payment');
 const nodemailer = require("nodemailer");
 // const Base_link = 'http://localhost:4200/#/link/';
-const Base_link = 'https://ch10002.herokuapp.com/#/link/';
+const Base_link = 'https://ch1000.netlify.com/#/link/';
 
 
 
