@@ -47,7 +47,6 @@ postUserToLevel2 = async (req, res, next) => {
 }
 
 postUserToLevel3 = async (req, res, next) => {
-    console.log('FIRE USER TO LEVEL3');
     // ####### SHARING PROFIT
      let getDocumentID = req.params.id;
      const funds_from16 = 32000;

@@ -6,7 +6,8 @@ const Transaction = mongoose.model('Transaction');
 const Invest = mongoose.model('Payment');
 const PayoutModel = mongoose.model('Payout');
 
-var levelOnePay = 425;
+var levelOnePay = 300;
+var levelOnePayWithoutRef = 300;
 var levelTwopay = 1400;
 var levelThreePay = 3840;
 var levelFourPay = 21504;
@@ -34,7 +35,6 @@ const transaction = async (req, res, next) => {
 
 await User.findOne({_id: req._id}, (error, document)=> {
   var getMyReferal = document.ref;
-  console.log('MY_REF', getMyReferal);
  
   var tranx = new Transaction();
     tranx.amount = req.body.amount;
@@ -48,19 +48,47 @@ await User.findOne({_id: req._id}, (error, document)=> {
      tranx.save().then(()=> {
                 User.findOne({$and: [ {username: getMyReferal}, {activate: true} ]}
                 ).then((doc)=> {
-                 if(doc){
-                  console.log('MY REFERAL FOUND', doc);
-
-                   doc.earnings += levelOnePay;
-                   doc.point += 1;
-                   doc.save();
-                 }else{
-                  console.log('NO REFERAL TO PAY.');
-                 }
-
-          res.status(200).send({status: true, message: 'payment saved!'});
-
-                });
+                  if(doc){
+                    if(doc.level === 'LEVEL-1'){
+                      console.log('MY REFERAL FOUND', doc);
+    
+                       doc.earnings += levelOnePay;
+                       doc.point += 1;
+                       doc.save();
+                     }else{
+                      User.findOne({$and: [{role: 'INVESTOR'},{point: {$lt: 16}},{level: "LEVEL-1"}, {activate: true}]}
+                      ).sort({date: 1}).then((doc)=> {
+                         if(doc){
+                          doc.earnings += levelOnePay;
+                          doc.point += 1;
+                          doc.save().then(()=> {
+                            res.status(200).send({status: true, message: 'payment saved!'});
+                          });
+                         }else{
+                           console.log('MAYBE USER IS NOT SCTIVATEED')
+                           res.status(200).send({status: true, message: 'payment saved!'});
+                         }
+                      });
+                     }
+                  }else{
+                    User.findOne({$and: [{role: 'INVESTOR'},{point: {$lt: 16}},{level: "LEVEL-1"}, {activate: true}]}
+                    ).sort({date: 1}).then((doc)=> {
+                       if(doc){
+                        doc.earnings += levelOnePay;
+                        doc.point += 1;
+                        doc.save().then(()=> {
+                          res.status(200).send({status: true, message: 'payment saved!'});
+                        });
+                       }else{
+                         console.log('MAYBE USER IS NOT SCTIVATEED')
+                         res.status(200).send({status: true, message: 'payment saved!'});
+                       }
+                    });
+                  }
+                 
+                }
+             
+                );
                        
     })
       // former send response
@@ -115,4 +143,4 @@ const payOutUser = async (req, res) => {
  }
 
 
-module.exports = {transaction, investmentCreate, payOutUser, getCurrentPayouts, getHighRanked}
+module.exports = {transaction, updateUser, investmentCreate, payOutUser, getCurrentPayouts, getHighRanked}

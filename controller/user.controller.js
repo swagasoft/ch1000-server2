@@ -9,6 +9,9 @@ const nodemailer = require("nodemailer");
 // const Base_link = 'http://localhost:4200/#/link/';
 const Base_link = 'https://ch1000.netlify.com/#/link/';
 
+const level2 = 'LEVEL-2';
+const level3 = 'LEVEL-3';
+const level4 = 'LEVEL-4';
 
 
 var dashboardInfo = {};
@@ -30,11 +33,9 @@ away from becoming our millioniare.</p> <br>
   const register = async (req, res, next) => {
     
     //  await User.findOne({}, {},{sort : {'date': -1}}).then((lastUser, err)=> {
-      
-   
+  
   var user = new User();
     let ref_username = req.body.ref_username;
-  console.warn('HERE...',ref_username);
 
 // convert all m to lower case.
 let getEmail = req.body.email;
@@ -43,7 +44,6 @@ let getUsername= req.body.username;
 let usernameToLower = getUsername.toLowerCase();
   // hash user password
 let hashPassword = cryptr.encrypt(req.body.password);
-// let lastUser = 1000;
   let intValue =  0;
 user.fullname = req.body.fullname;
 user.username = usernameToLower;
@@ -63,28 +63,34 @@ user.activate = false;
  user.save(( err, doc) => {
       if(!err){
          if(ref_username != null || undefined){
-          console.log('REFERRAL IS.', ref_username);
-            User.findOne({username:ref_username}).then(( result) => {
-            result.downline.push(usernameToLower);
-            result.ref_count++;
-            result.save(); });
-                  }else{
-                      console.log('REFERRAL IS NOT DEFINE.');
-                      // User.findOne({$and: [ {sort :{'date' :1}} , {point : {$lt: 4} },
-                      //     {activate: true}
-                      //   ]}
-                      // ).then((user)=> {  
-                      //    console.log(user);
-                      //   if(user){
-                      //     user.downline.push(usernameToLower);
-                      //   user.ref_count++;
-                      //   user.save();
-                      //   }else{
-                      //     console.warn('NO USER TO PUSH  DOWN LINE');
-                      //   }
-                      // })
-                  }
+            const updateReferal = User.findOne({username: ref_username}).then((user)=> {
+              if(user){
+                user.downline.push(usernameToLower);
+                user.ref_count++;
+                user.save();
+              }else{
+                console.log('no downline to push in');
+              }
+            });
+          const findFirstUser = User.findOne({}).sort({date : 1});
+
+      Promise.all([updateReferal, findFirstUser ]).then(()=> {
+        
       res.status(201).send(['Registration succesful']);
+      });
+              }else{
+                console.log('asign random user');
+                 User.findOne({level: 'LEVEL-1'}).sort({date: 1}).then((user)=> {
+                  if(user){
+                    user.downline.push(usernameToLower);
+                    user.ref_count++;
+                    user.save().then(()=> {res.status(201).send(['Registration succesful']);} );
+                  }else{
+                    console.log('no downline to push in');
+                  }
+                });
+              }
+
       
       }else {
       console.log('ERROR SAVING DATA....', err);
@@ -138,22 +144,125 @@ let decrypePass = cryptr.decrypt(databasePassword);
 }
 
 
-const userDashboard = (req, res, next) =>{
-User.findOne({_id: req._id}, (err, doc) => {
- dashboardInfo = doc;
-}).then( ()=> {
-  Invest.findOne({user_id: req._id}, (err, doc) => {
-    investInfo = doc;
-  });
-}).then(()=> {
-res.status(200).json({status: true, 
-  user: lodash.pick(dashboardInfo,
-    ['email','fullname', 'username','role', 'ref_link','point','earnings','investment',
- 'cust_id','activate','level','cashout','group', 'downline','ref_count'])});
+const userDashboard = async (req, res, next) =>{
+ 
+ await User.findOne({_id: req._id}, (err, doc) => {
+   if(doc.point === 4){
+    console.log('USER PONIT == 4');
+    const funds_from4 = 4000;
+    let dividend =  (funds_from4 * 0.3) ;
+    let re_investment = (funds_from4 * 0.5);
 
+     const setuserLevel =  User.updateOne({_id: doc._id},{$set: {level : "LEVEL-2", point:5, investment: re_investment}});
+     const updateEarnings =   User.updateOne({_id: doc._id}, {$inc : {earnings : dividend}});
+     const updateTop = User.findOne({$and: [{role: 'INVESTOR'},{point: {$lt: 16}},{level: "LEVEL-2"}, {activate: true}]}
+     ).sort({date: 1}).then(result16 => { if(result16){
+       console.log('WE UPDATE THIS USER',result16);
+        result16.point += 1;
+          result16.save();
+     } else{ console.log('NO TOP USER TO UPDATE')}});
+
+     Promise.all([setuserLevel, updateEarnings, updateTop]).then(()=> {
+      User.findOne({_id: req._id}, (err, doc) => {    let dashboardInfo = doc;         
+      res.status(200).json({status: true, user: lodash.pick(dashboardInfo,
+    ['email','fullname', 'username','role', 'ref_link','point','earnings','investment',
+    'cust_id','activate','level','cashout','group', 'downline','ref_count'])});
+       });
+     });
+
+   }else if(doc.point == 16){
+    console.log('USER PONIT == 16');
+    const funds_from16 = 32000;
+    let dividend =  (funds_from16 * 0.7) ;
+    let re_investment = (funds_from16 * 0.3);
+
+     const setuserLevel =  User.updateOne({_id: doc._id},{$set: {level : "LEVEL-3", point:17, investment: re_investment}});
+     const updateEarnings =   User.updateOne({_id: doc._id}, {$inc : {earnings : dividend}});
+     const updateTop = User.findOne({$and: [{role: 'INVESTOR'},{point: {$lt: 64}},{level: "LEVEL-3"}, {activate: true}]}
+     ).sort({date: 1}).then(result64 => { if(result64){
+       console.log('WE UPDATE THIS USER',result64);
+        result64.point += 1;
+          result64.save();
+     } else{ console.log('NO TOP USER TO UPDATE')}});
+
+     Promise.all([setuserLevel, updateEarnings, updateTop]).then(()=> {
+      User.findOne({_id: req._id}, (err, doc) => {    let dashboardInfo = doc;         
+      res.status(200).json({status: true, user: lodash.pick(dashboardInfo,
+    ['email','fullname', 'username','role', 'ref_link','point','earnings','investment',
+    'cust_id','activate','level','cashout','group', 'downline','ref_count'])});
+       });
+     });
+
+   }else if(doc.point == 64) {
+    console.log('USER Y POINT === 64');
+    const funds_from64 = 614400;
+    let dividend =  (funds_from64 * 0.4) ;
+    let re_investment = (funds_from64 * 0.1);
+
+     const setuserLevel =  User.updateOne({_id: doc._id},{$set: {level : "LEVEL-4", point:65, investment: re_investment}});
+     const updateEarnings =   User.updateOne({_id: doc._id}, {$inc : {earnings : dividend}});
+     const updateTop = User.findOne({$and: [{role: 'INVESTOR'},{point: {$lt: 256}},{level: "LEVEL-4"}, {activate: true}]}
+     ).sort({date: 1}).then(result256 => { if(result256){
+       console.log('WE UPDATE THIS USER',result256);
+        result256.point += 1;
+          result256.save();
+     } else{ console.log('NO TOP USER TO UPDATE')}});
+
+     Promise.all([setuserLevel, updateEarnings, updateTop]).then(()=> {
+      User.findOne({_id: req._id}, (err, doc) => {    let dashboardInfo = doc;         
+      res.status(200).json({status: true, user: lodash.pick(dashboardInfo,
+    ['email','fullname', 'username','role', 'ref_link','point','earnings','investment',
+    'cust_id','activate','level','cashout','group', 'downline','ref_count'])});
+       });
+     });
+
+
+   }else if(doc.point == 256){
+    console.log('USER Y POINT === 256');
+    const funds_from64 = 15728640;
+    let dividend =  (funds_from64 * 0.35) ;
+    let re_investment = (funds_from64 * 0.1);
+
+     const setuserLevel =  User.updateOne({_id: doc._id},{$set: {level : "LEVEL-5", point:257, investment: re_investment}});
+     const updateEarnings =   User.updateOne({_id: doc._id}, {$inc : {earnings : dividend}});
+
+     Promise.all([setuserLevel, updateEarnings, updateTop]).then(()=> {
+      User.findOne({_id: req._id}, (err, doc) => {    let dashboardInfo = doc;         
+      res.status(200).json({status: true, user: lodash.pick(dashboardInfo,
+    ['email','fullname', 'username','role', 'ref_link','point','earnings','investment',
+    'cust_id','activate','level','cashout','group', 'downline','ref_count'])});
+       });
+     });
+
+   }else{
+    console.log('USER YET FOR UPDRAGE');
+    let dashboardInfo = doc;  
+    res.status(200).json({status: true, user: lodash.pick(dashboardInfo,
+       ['email','fullname', 'username','role', 'ref_link','point','earnings','investment',
+    'cust_id','activate','level','cashout','group', 'downline','ref_count'])});
+
+   }
+ 
 });
 
 }
+
+
+const autoLevelPush = async (req, res, next) => {
+  
+  const funds_from4 = 4000;
+  let dividend =  (funds_from4 * 0.3) ;
+  let re_investment = (funds_from4 * 0.5);
+  
+   //  # update user LEVEL
+  //  await User.updateOne({_id: dashboardInfo._id},
+  //   {$set: {level : level2, investment: re_investment}});
+  //  await User.updateOne({_id: dashboardInfo._id}, {$inc : {earnings : dividend}});
+   
+}
+
+
+
 
 const editAccount = (req, res, next) => {
 User.findOne({_id: req._id}, (err, doc) => {
@@ -167,4 +276,5 @@ User.findOne({_id: req._id}, (err, doc) => {
 });
 }
 
-module.exports = { register, index, authenticate, userDashboard, editAccount}
+module.exports = { register, index, autoLevelPush,
+   authenticate, userDashboard, editAccount}

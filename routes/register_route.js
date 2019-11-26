@@ -15,7 +15,7 @@ router.post('/register', controlUser.register);
 router.get('/contact',  contactController.homePage);
 router.post('/contact',  contactController.submitForm);
 router.post('/authenticate', controlUser.authenticate);
-router.get('/dashboard',jwt_helper.verifyJwtToken ,controlUser.userDashboard);
+router.get('/dashboard', jwt_helper.verifyJwtToken ,controlUser.userDashboard);
 router.get('/edit_account',jwt_helper.verifyJwtToken ,controlUser.editAccount);
 router.post('/transaction',jwt_helper.verifyJwtToken ,controlTranx.transaction);
 router.get('/investment_create',jwt_helper.verifyJwtToken ,controlTranx.investmentCreate);
